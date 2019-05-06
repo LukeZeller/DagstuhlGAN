@@ -16,7 +16,7 @@ public class GlobalOptions {
 
     public static boolean VisualizationOn = false;
     public static boolean GameVeiwerOn = false;
-    public static boolean JsonAsString = true;
+    public static boolean JsonAsString = false;
 
 
     private static MarioComponent marioComponent = null;
