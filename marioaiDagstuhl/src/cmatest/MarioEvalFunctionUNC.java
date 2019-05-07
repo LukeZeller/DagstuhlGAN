@@ -122,6 +122,9 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
 			Level level = levelFromLatentVector(x);
 			// Do a simulation
 			EvaluationInfo info = this.marioProcess.simulateOneLevel(level);
+
+			LevelStatistics levelStats = new LevelStatistics(level);
+			System.out.println("Broken Pipe Tiles: " + levelStats.numBrokenPipeTiles);
 			// Fitness is negative since CMA-ES tries to minimize
                         //System.out.println("done");
                         //System.out.println(info.jumpActionsPerformed);
