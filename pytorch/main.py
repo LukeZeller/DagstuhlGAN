@@ -237,7 +237,7 @@ for epoch in range(opt.niter):
         print('[%d/%d][%d/%d][%d] Loss_D: %f Loss_G: %f Loss_D_real: %f Loss_D_fake %f'
             % (epoch, opt.niter, i, num_batches, gen_iterations,
             errD.data[0], errG.data[0], errD_real.data[0], errD_fake.data[0]))
-        if gen_iterations % 50 == 0:   #was 500
+        if gen_iterations % 5000 == 0:   #was 500
 
             fake = netG(Variable(fixed_noise, volatile=True))
             
