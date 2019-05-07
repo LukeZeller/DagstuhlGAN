@@ -34,7 +34,7 @@ public class EvaluationInfo
     public static final int trivialJumpWeight = 1;
 
     public static final int badPipeTileWeight = -2;
-    public static final int goodPipeTileWeight = 5;
+    public static final int goodPipeTileWeight = 2;
     public static final int gapWeight = 2;
 
     /* Statistics on player actions during the level */
