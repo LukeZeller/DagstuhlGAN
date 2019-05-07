@@ -112,11 +112,6 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
 		String levelString = ganProcess.commRecv(); // Response to com	mand just sent
 		return levelString;
 	}
-
-	/* Maps number of gaps (empty ground spaces) to fitness */
-	private double gapFitness(int numGaps) {
-		return (14 - Math.abs(14 - numGaps)) * EvaluationInfo.gapWeight;
-	}
 	
 	/**
 	 * Gets objective score for single latent vector.
@@ -163,7 +158,7 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
 						- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed
 						- levelStats.numBrokenPipeTiles * EvaluationInfo.badPipeTileWeight
                 		- levelStats.numValidPipeTiles * EvaluationInfo.goodPipeTileWeight
-						- gapFitness(levelStats.numGaps);
+						- levelStats.gapFitness() * EvaluationInfo.gapWeight;
 			}
 
 		} catch (IOException e) {
