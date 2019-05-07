@@ -206,9 +206,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                                      * than the trivial jump threshold */
                                 }
                             }
+                            previousJumpFrame = frame;
                         }
-                        ++totalActionsPerfomed;
-                        break;
+                        totalActionsPerfomed++;
                     }
                 }
             }
