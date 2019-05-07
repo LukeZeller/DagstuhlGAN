@@ -91,8 +91,8 @@ public class MarioLevelPlayer {
 		}
 
 		MarioProcess marioProcess = new MarioProcess();
-		marioProcess.launchMario(new String[0], true); // true means there is a human player       
-		marioProcess.simulateOneLevel(level);
+		marioProcess.launchMario(new String[0], true); // true means there is a human player
+		System.out.println(marioProcess.simulateOneLevel(level));
 		
                 eval.exit();
 		System.exit(0);

@@ -132,7 +132,9 @@ public class MarioEvalFunction implements IObjectiveFunction {
 				//System.out.println("Beat level!");
                                 //System.out.println(info.computeJumpFraction());
 				// Also maximize time, since this would imply the level is more challenging/interesting
-				//return -info.computeDistancePassed() - info.timeSpentOnLevel; 
+				//return -info.computeDistancePassed() - info.timeSpentOnLevel;
+				System.out.println(info.computeDistancePassed()/LEVEL_LENGTH);
+				System.out.println(info.jumpActionsPerformed);
                 return (double) -info.computeDistancePassed()/LEVEL_LENGTH - info.jumpActionsPerformed;
 			}
 
