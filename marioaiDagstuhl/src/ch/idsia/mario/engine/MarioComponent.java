@@ -236,7 +236,12 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             }
 
             if (hardJumpActionsPerformed + mediumJumpActionsPerformed + easyJumpActionsPerformed + trivialJumpActionsPerformed != jumpActionsPerformed) {
-                throw new RuntimeException("Expected the total number of jumps to be equal to the sum of hard/medium/easy/trivial jumps");
+                throw new RuntimeException("Expected the total number of jumps to be equal to the sum of hard/medium/easy/trivial jumps\n" +
+                                            "Found " + jumpActionsPerformed + " jumps\n" +
+                                            " and have " + hardJumpActionsPerformed + " hard jumps\n" +
+                                            mediumJumpActionsPerformed + " medium jumps\n" +
+                                            easyJumpActionsPerformed + " easy jumps\n" +
+                                            trivialJumpActionsPerformed + " trivial jumps");
             }
 
 
