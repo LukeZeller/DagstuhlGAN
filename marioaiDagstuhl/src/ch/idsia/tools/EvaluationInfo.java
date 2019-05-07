@@ -14,6 +14,23 @@ import java.text.DecimalFormat;
 public class EvaluationInfo
 {
     private static final int MagicNumberUndef = -42;
+    /*
+    * Frame gap thresholds used to categorize difficulty of a jump --
+    * jumps done in a tighter time frame are considered to be harder
+    */
+    public static final int hardJumpThreshold = 10; /* If a jump is done <= 5 frames after the previous jump is completed,
+                                                      * it qualifies as a hard jump */
+    public static final int mediumJumpThreshold = 20; /* If a jump is done <= 20 frames after the previous jump is completed,
+                                                        * it qualifies as a medium jump */
+    public static final int easyJumpThreshold = 30; /* If a jump is done <= 30 frames after the previous jump is completed,
+                                                      * it qualifies as a medium jump */
+    public static final int trivialJumpThreshold = 20000; /* All remaining jumps are effectively classified as trivial */
+    /* The following weights are used to determine the difficulty of a level -- harder jumps contribute more to the difficulty */
+    public static final int hardJumpWeight = 10;
+    public static final int mediumJumpWeight = 5;
+    public static final int easyJumpWeight = 3;
+    public static final int trivialJumpWeight = 1;
+    /* Statistics on player actions during the level */
     public int levelType = MagicNumberUndef;
     public int marioStatus = MagicNumberUndef;
     public int livesLeft = MagicNumberUndef;
@@ -27,6 +44,10 @@ public class EvaluationInfo
 //    public int totalNumberOfCoins = MagicNumberUndef;
     public int totalActionsPerfomed = MagicNumberUndef;
     public int jumpActionsPerformed = MagicNumberUndef;
+    public int hardJumpActionsPerformed = MagicNumberUndef;
+    public int mediumJumpActionsPerformed = MagicNumberUndef;
+    public int easyJumpActionsPerformed = MagicNumberUndef;
+    public int trivialJumpActionsPerformed = MagicNumberUndef;
     public int totalFramesPerfomed = MagicNumberUndef;
     // Number Of collisions with creatures
     // if large
