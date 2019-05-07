@@ -155,7 +155,8 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
 						- EvaluationInfo.hardJumpWeight * info.hardJumpActionsPerformed
 						- EvaluationInfo.mediumJumpWeight * info.mediumJumpActionsPerformed
 						- EvaluationInfo.easyJumpWeight * info.easyJumpActionsPerformed
-						- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed;
+						- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed
+						- levelStats.numBrokenPipeTiles * EvaluationInfo.tileWeight;
 			}
 
 		} catch (IOException e) {

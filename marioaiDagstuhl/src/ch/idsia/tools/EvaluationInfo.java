@@ -32,6 +32,7 @@ public class EvaluationInfo
     public static final int mediumJumpWeight = 5;
     public static final int easyJumpWeight = 3;
     public static final int trivialJumpWeight = 1;
+    public static final int tileWeight = -2;
     /* Statistics on player actions during the level */
     public int levelType = MagicNumberUndef;
     public int marioStatus = MagicNumberUndef;
