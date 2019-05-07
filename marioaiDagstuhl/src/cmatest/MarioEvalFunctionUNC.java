@@ -128,7 +128,21 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
                         //System.out.println(info.computeJumpFraction());
 			if(info.computeDistancePassed() < LEVEL_LENGTH) { // Did not beat level
 				// Only optimize distance passed in this case
-				return -info.computeDistancePassed() / LEVEL_LENGTH;
+				int penalty = 0;
+				if (info.marioRanOutOfTime) {
+					penalty = 50;
+				}
+				else if (info.marioDiedToFall) {
+					penalty = 25;
+				}
+				else if (info.marioDiedToEnemy) {
+					penalty = 10;
+				}
+				else {
+					throw new RuntimeException("If mario failed, it should have been due to running out of time," +
+												" running into an enemy, or falling into a hole!");
+				}
+				return -info.computeDistancePassed() / LEVEL_LENGTH + penalty;
 			} else{ // Did beat level
 				//System.out.println("Beat level!");
                                 //System.out.println(info.computeJumpFraction());
