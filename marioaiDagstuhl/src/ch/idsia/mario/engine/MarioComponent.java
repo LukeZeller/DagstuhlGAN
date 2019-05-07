@@ -177,9 +177,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 for (int i = 0; i < Environment.numberOfButtons; ++i){
                     if (action[i])
                     {
-                        if(i == Mario.KEY_JUMP){
-
-
+                        if(i == Mario.KEY_JUMP) {
                             /*
                             * If gapBetweenJumps is <= 1, that means the jump key was just held or pressed for the first time
                             * We categorize the difficulty of jumps based on # of frames between the end of one jump action
@@ -218,6 +216,10 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             {
                 System.err.println("Null Action received. Skipping simulation...");
                 stop();
+            }
+
+            if (hardJumpActionsPerformed + mediumJumpActionsPerformed + easyJumpActionsPerformed + trivialJumpActionsPerformed != jumpActionsPerformed) {
+                throw new RuntimeException("Expected the total number of jumps to be equal to the sum of hard/medium/easy/trivial jumps");
             }
 
 
