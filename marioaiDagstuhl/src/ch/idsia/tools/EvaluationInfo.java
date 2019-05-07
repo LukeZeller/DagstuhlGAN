@@ -123,6 +123,11 @@ public class EvaluationInfo
         ret += "\n                   Total time given : " + totalTimeGiven;
 //        ret += "\nCoins Gained: " + numberOfGainedCoins/totalNumberOfCoins*100 + "%. (" + numberOfGainedCoins + " of " + totalNumberOfCoins + ")";
         ret += "\n                       Coins Gained : " + numberOfGainedCoins;
+        ret += "\n             Jump Actions Performed : " + jumpActionsPerformed;
+        ret += "\n     Trivial Jump Actions Performed : " + trivialJumpActionsPerformed;
+        ret += "\n        Easy Jump Actions Performed : " + easyJumpActionsPerformed;
+        ret += "\n      Medium Jump Actions Performed : " + mediumJumpActionsPerformed;
+        ret += "\n        Hard Jump Actions Performed : " + hardJumpActionsPerformed;
         ret += "\n             Total Actions Perfomed : " + totalActionsPerfomed;
         ret += "\n              Total Frames Perfomed : " + totalFramesPerfomed;
         ret += "\n               Simple Basic Fitness : " + df.format(computeBasicFitness());
