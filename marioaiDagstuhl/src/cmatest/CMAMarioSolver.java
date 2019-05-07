@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import basicMap.Settings;
 import basicMap.Settings;
+import ch.idsia.tools.EvaluationInfo;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 import fr.inria.optimization.cmaes.fitness.IObjectiveFunction;
 
@@ -17,12 +18,12 @@ import java.io.IOException;
 public class CMAMarioSolver {
 	// Sebastian's Wasserstein GAN expects latent vectors of length 32
 	public static final int Z_SIZE = 32; // length of latent space vector
-	public static final int EVALS = 1000;
+	public static final int EVALS = 500;
 
 	
     public static void main(String[] args) throws IOException {
         Settings.setPythonProgram();
-        int loops = 100;
+        int loops = 1;
         double[][] bestX = new double[loops][32];
         double[] bestY = new double[loops];
         MarioEvalFunctionUNC marioEvalFunction = new MarioEvalFunctionUNC();
@@ -112,7 +113,16 @@ public class CMAMarioSolver {
                     //   sufficiently small to prevent quasi-infinite looping here
                     // compute fitness/objective value
                 }
-                fitness[i] = fitFun.valueOf(pop[i]); // fitfun.valueOf() is to be minimized
+                double[] checker = new double[3];
+                double max = 0;
+                double min = Double.MAX_VALUE;
+                for(int k =0; k < 2; k++) {
+                    checker[k] = fitFun.valueOf(pop[i]); // fitfun.valueOf() is to be minimized
+                    max = (checker[k] > max) ? checker[k] : max;
+                    min = (checker[k] < min) ? checker[k] : min;
+                }
+                fitness[i] = (max > 0 && min < 0) ? min - EvaluationInfo.repeatWeight : min;
+
                 System.out.println(fitness[i]);
                 print_line.println(Arrays.toString(pop[i])+ " : " + fitness[i]);
                 System.out.println(step);
