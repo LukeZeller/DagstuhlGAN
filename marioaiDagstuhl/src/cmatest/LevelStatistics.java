@@ -112,6 +112,7 @@ public class LevelStatistics {
         this.level = level;
         numPipeTiles = 0;
         numBrokenPipeTiles = 0;
+        numValidPipeTiles = 0;
         numGroundRocks = 0;
         numRocks = 0;
         processLevel();
