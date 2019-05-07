@@ -14,6 +14,8 @@ import java.text.DecimalFormat;
 public class EvaluationInfo
 {
     private static final int MagicNumberUndef = -42;
+    /* Constants related to mario's status */
+    public static final float lowestValidPosition = 225.0f;
     /*
     * Frame gap thresholds used to categorize difficulty of a jump --
     * jumps done in a tighter time frame are considered to be harder
@@ -49,6 +51,9 @@ public class EvaluationInfo
     public int easyJumpActionsPerformed = MagicNumberUndef;
     public int trivialJumpActionsPerformed = MagicNumberUndef;
     public int totalFramesPerfomed = MagicNumberUndef;
+    public boolean marioDiedToFall = false;
+    public boolean marioDiedToEnemy = false;
+    public boolean marioRanOutOfTime = false;
     // Number Of collisions with creatures
     // if large
     // if fire
@@ -128,6 +133,9 @@ public class EvaluationInfo
         ret += "\n        Easy Jump Actions Performed : " + easyJumpActionsPerformed;
         ret += "\n      Medium Jump Actions Performed : " + mediumJumpActionsPerformed;
         ret += "\n        Hard Jump Actions Performed : " + hardJumpActionsPerformed;
+        ret += "\n        Mario Died to Fall : "          + marioDiedToFall;
+        ret += "\n        Mario Died to Enemy: "          + marioDiedToEnemy;
+        ret += "\n        Mario Ran out of Time : "       + marioRanOutOfTime;
         ret += "\n             Total Actions Perfomed : " + totalActionsPerfomed;
         ret += "\n              Total Frames Perfomed : " + totalFramesPerfomed;
         ret += "\n               Simple Basic Fitness : " + df.format(computeBasicFitness());
