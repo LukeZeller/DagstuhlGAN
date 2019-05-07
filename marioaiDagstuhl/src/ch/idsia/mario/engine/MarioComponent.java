@@ -146,6 +146,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         int easyJumpActionsPerformed = 0;
         int trivialJumpActionsPerformed = 0;
         int previousJumpFrame = -1;
+        frame = 0;
 
         boolean marioDiedToFall = false;
         boolean marioDiedToEnemy = false;
