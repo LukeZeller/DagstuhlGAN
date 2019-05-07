@@ -97,15 +97,20 @@ public class LevelStatistics {
 
     private Level level;
 
+    /* Total number of pipe tiles */
+    public int numPipeTiles = MagicNumberUndef;
+    /* Number of pipe tiles in level that are part of a valid pipe */
+    public int numValidPipeTiles = MagicNumberUndef;
     /* Number of pipe tiles in level that aren't part of a valid pipe */
     public int numBrokenPipeTiles = MagicNumberUndef;
-    /* Number of rocks on ground level */
-    public int numGroundRocks = MagicNumberUndef;
     /* Total number of ground rocks (including those not on ground level) */
     public int numRocks = MagicNumberUndef;
+    /* Number of rocks on ground level */
+    public int numGroundRocks = MagicNumberUndef;
 
     public LevelStatistics(Level level) {
         this.level = level;
+        numPipeTiles = 0;
         numBrokenPipeTiles = 0;
         numGroundRocks = 0;
         numRocks = 0;
@@ -143,8 +148,10 @@ public class LevelStatistics {
     }
 
     private void processTile(int x, int y) {
-        if (isPipeTile(x, y) && !containedInValidPipe(x, y)) {
-            numBrokenPipeTiles++;
+        if (isPipeTile(x, y)) {
+            numPipeTiles++;
+            if (containedInValidPipe(x, y)) numValidPipeTiles++;
+            else numBrokenPipeTiles++;
         }
         if (level.getBlock(x, y) == LevelStatistics.GROUND_ROCK) {
             numRocks++;
@@ -158,5 +165,6 @@ public class LevelStatistics {
                 processTile(x, y);
             }
         }
+
     }
 }
