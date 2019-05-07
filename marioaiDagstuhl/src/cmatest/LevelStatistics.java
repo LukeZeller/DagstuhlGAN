@@ -3,12 +3,13 @@ package cmatest;
 import basicMap.Settings;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.LevelParser;
-import communication.MarioProcess;
 import reader.JsonReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 import static reader.JsonReader.JsonToDoubleArray;
 
@@ -122,27 +123,50 @@ public class LevelStatistics {
         processLevel();
     }
 
+    public Function<Integer, Integer> optTransform(int opt) {
+        return (x) -> opt - Math.abs(opt - x);
+    }
+
+    public double gapFitness() {
+        // List of all ground platform lengths
+        ArrayList<Integer> ground = new ArrayList<>();
+        // List of all gap lengths
+        ArrayList<Integer> gaps = new ArrayList<>();
+        int groundStart = 0, gapStart = level.width;
+        for (int xCurr = 0; xCurr < level.width; xCurr++) {
+            int tile = level.getBlock(xCurr, level.height - 1);
+            if (tile == GROUND_ROCK) {
+                // We're at the end of a gap
+                if (gapStart < xCurr - 1)
+                    gaps.add(xCurr - gapStart + 1);
+                // gapStart tracks xCarr as long as tile is rock
+                gapStart = xCurr;
+            }
+        }
+        return optTransform(7).apply(gaps.stream().mapToInt((ToIntFunction) optTransform(3)).sum());
+    }
+
     /* Private helper functions */
 
     private boolean isPipeTile(int x, int y) {
         int tile = level.getBlock(x, y);
-        return tile == LevelStatistics.TOP_LEFT_PIPE || tile == LevelStatistics.TOP_RIGHT_PIPE
-                || tile == LevelStatistics.LEFT_PIPE || tile == LevelStatistics.RIGHT_PIPE;
+        return tile == TOP_LEFT_PIPE || tile == TOP_RIGHT_PIPE
+                || tile == LEFT_PIPE || tile == RIGHT_PIPE;
     }
 
     private boolean isValidPipe(int xLeft, int yTop) {
         int tileTopLeft = level.getBlock(xLeft, yTop);
         int tileTopRight = level.getBlock(xLeft + 1, yTop);
-        if (tileTopLeft != LevelStatistics.TOP_LEFT_PIPE || tileTopRight != LevelStatistics.TOP_RIGHT_PIPE)
+        if (tileTopLeft != TOP_LEFT_PIPE || tileTopRight != TOP_RIGHT_PIPE)
             return false;
 
         int y = yTop + 1;
-        while (level.getBlock(xLeft, y) == LevelStatistics.LEFT_PIPE
-                && level.getBlock(xLeft + 1, y) == LevelStatistics.RIGHT_PIPE) y++;
+        while (level.getBlock(xLeft, y) == LEFT_PIPE
+                && level.getBlock(xLeft + 1, y) == RIGHT_PIPE) y++;
         if (y == yTop + 1) return false;
 
-        return level.getBlock(xLeft, y) == LevelStatistics.GROUND_ROCK
-                && level.getBlock(xLeft + 1, y) == LevelStatistics.GROUND_ROCK;
+        return level.getBlock(xLeft, y) == GROUND_ROCK
+                && level.getBlock(xLeft + 1, y) == GROUND_ROCK;
     }
 
     private boolean containedInValidPipe(int x, int y) {
@@ -158,11 +182,11 @@ public class LevelStatistics {
             if (containedInValidPipe(x, y)) numValidPipeTiles++;
             else numBrokenPipeTiles++;
         }
-        if (level.getBlock(x, y) == LevelStatistics.GROUND_ROCK) {
+        if (level.getBlock(x, y) == GROUND_ROCK) {
             numRocks++;
             if (y == level.height - 1) numGroundRocks++;
         }
-        if (y == level.height - 1 && level.getBlock(x, y) == LevelStatistics.EMPTY_SPACE)
+        if (y == level.height - 1 && level.getBlock(x, y) == EMPTY_SPACE)
             numGaps++;
     }
 
