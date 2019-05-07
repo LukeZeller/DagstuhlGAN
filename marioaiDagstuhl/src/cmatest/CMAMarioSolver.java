@@ -24,7 +24,7 @@ public class CMAMarioSolver {
         int loops = 100;
         double[][] bestX = new double[loops][32];
         double[] bestY = new double[loops];
-        MarioEvalFunction marioEvalFunction = new MarioEvalFunction();
+        MarioEvalFunctionUNC marioEvalFunction = new MarioEvalFunctionUNC();
         for(int i=0; i<loops; i++){
             System.out.println("Iteration:"+ i);
             CMAMarioSolver solver = new CMAMarioSolver(marioEvalFunction, Z_SIZE, EVALS);
