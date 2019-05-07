@@ -115,7 +115,7 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
 
 	/* Maps number of gaps (empty ground spaces) to fitness */
 	private double gapFitness(int numGaps) {
-		return 14 - Math.abs(14 - numGaps);
+		return (14 - Math.abs(14 - numGaps)) * EvaluationInfo.gapWeight;
 	}
 	
 	/**
