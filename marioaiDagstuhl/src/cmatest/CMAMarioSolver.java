@@ -22,7 +22,7 @@ public class CMAMarioSolver {
 	
     public static void main(String[] args) throws IOException {
         Settings.setPythonProgram();
-        int loops = 2;
+        int loops = 100;
         double[][] bestX = new double[loops][32];
         double[] bestY = new double[loops];
         MarioEvalFunctionUNC marioEvalFunction = new MarioEvalFunctionUNC();

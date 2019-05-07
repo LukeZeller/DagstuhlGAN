@@ -146,6 +146,11 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         int easyJumpActionsPerformed = 0;
         int trivialJumpActionsPerformed = 0;
         int previousJumpFrame = -1;
+        frame = 0;
+
+        boolean marioDiedToFall = false;
+        boolean marioDiedToEnemy = false;
+        boolean marioRanOutOfTime = false;
 // TODO: Manage better place for this:
         levelScene.mario.resetCoins();
         LevelScene backup = null;
@@ -170,6 +175,19 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 running = false;
                 break;
             }
+
+            float current_mario_x = levelScene.mario.x;
+            float current_mario_y = levelScene.mario.y;
+
+            if (current_mario_y > EvaluationInfo.lowestValidPosition && levelScene.timeLeft > 0)
+            {
+                marioDiedToFall = true;
+            }
+            if (!marioDiedToFall && levelScene.mario.getStatus() == 0 && levelScene.timeLeft > 0)
+            {
+                marioDiedToEnemy = true;
+            }
+            // System.out.println("Current x and y: " + current_mario_x + " " + current_mario_y);
 
             boolean[] action = agent.getAction(this/*DummyEnvironment*/);
             if (action != null)
@@ -219,7 +237,12 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             }
 
             if (hardJumpActionsPerformed + mediumJumpActionsPerformed + easyJumpActionsPerformed + trivialJumpActionsPerformed != jumpActionsPerformed) {
-                throw new RuntimeException("Expected the total number of jumps to be equal to the sum of hard/medium/easy/trivial jumps");
+                throw new RuntimeException("Expected the total number of jumps to be equal to the sum of hard/medium/easy/trivial jumps\n" +
+                                            "Found " + jumpActionsPerformed + " jumps\n" +
+                                            " and have " + hardJumpActionsPerformed + " hard jumps\n" +
+                                            mediumJumpActionsPerformed + " medium jumps\n" +
+                                            easyJumpActionsPerformed + " easy jumps\n" +
+                                            trivialJumpActionsPerformed + " trivial jumps");
             }
 
 
@@ -328,6 +351,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             // Advance the frame
             frame++;
         }
+        marioRanOutOfTime = levelScene.timeLeft <= 0;
 //=========
         evaluationInfo.agentType = agent.getClass().getSimpleName();
         evaluationInfo.agentName = agent.getName();
@@ -350,6 +374,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.trivialJumpActionsPerformed = trivialJumpActionsPerformed; // Counted during play/simulation
 
         evaluationInfo.totalFramesPerfomed = frame;
+        evaluationInfo.marioDiedToFall = marioDiedToFall;
+        evaluationInfo.marioDiedToEnemy = marioDiedToEnemy;
+        evaluationInfo.marioRanOutOfTime = marioRanOutOfTime;
         evaluationInfo.marioMode = levelScene.mario.getMode();
         evaluationInfo.killsTotal = levelScene.mario.world.killedCreaturesTotal;
 //        evaluationInfo.Memo = "Number of attempt: " + Mario.numberOfAttempts;
