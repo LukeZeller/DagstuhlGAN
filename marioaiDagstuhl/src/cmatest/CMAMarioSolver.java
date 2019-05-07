@@ -21,7 +21,7 @@ public class CMAMarioSolver {
 	
     public static void main(String[] args) throws IOException {
         Settings.setPythonProgram();
-        int loops = 100;
+        int loops = 2;
         double[][] bestX = new double[loops][32];
         double[] bestY = new double[loops];
         MarioEvalFunctionUNC marioEvalFunction = new MarioEvalFunctionUNC();
@@ -96,6 +96,7 @@ public class CMAMarioSolver {
         cma.writeToDefaultFilesHeaders(0); // 0 == overwrites old files
 
         // iteration loop
+        int step = 0;
         while (cma.stopConditions.getNumber() == 0) {
 
             // --- core iteration step ---
@@ -113,6 +114,8 @@ public class CMAMarioSolver {
                 fitness[i] = fitFun.valueOf(pop[i]); // fitfun.valueOf() is to be minimized
                 System.out.println(fitness[i]);
                 print_line.println(Arrays.toString(pop[i])+ " : " + fitness[i]);
+                System.out.println(step);
+                step++;
             }
             cma.updateDistribution(fitness);         // pass fitness array to update search distribution
             // --- end core iteration step ---
