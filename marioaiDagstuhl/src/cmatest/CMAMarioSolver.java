@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import basicMap.Settings;
+import basicMap.Settings;
 import fr.inria.optimization.cmaes.CMAEvolutionStrategy;
 import fr.inria.optimization.cmaes.fitness.IObjectiveFunction;
 

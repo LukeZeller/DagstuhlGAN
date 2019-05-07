@@ -178,7 +178,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                     if (action[i])
                     {
                         if(i == Mario.KEY_JUMP){
-                            jumpActionsPerformed++;
+
 
                             /*
                             * If gapBetweenJumps is <= 1, that means the jump key was just held or pressed for the first time
@@ -189,6 +189,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                             int gapBetweenJumps = frame - previousJumpFrame;
                             if (gapBetweenJumps > 1)
                             {
+                                jumpActionsPerformed++;
                                 if (gapBetweenJumps <= EvaluationInfo.hardJumpThreshold) {
                                     hardJumpActionsPerformed++;
                                 }
@@ -208,7 +209,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                             }
                             previousJumpFrame = frame;
                         }
-                        totalActionsPerfomed++;
+                        ++totalActionsPerfomed;
+                       // break;
                     }
                 }
             }
