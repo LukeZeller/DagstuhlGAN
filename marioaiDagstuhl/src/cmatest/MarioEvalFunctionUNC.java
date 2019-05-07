@@ -129,37 +129,40 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
                         //System.out.println("done");
                         //System.out.println(info.jumpActionsPerformed);
                         //System.out.println(info.computeJumpFraction());
+			double penalty = 0;
 			if(info.computeDistancePassed() < LEVEL_LENGTH) { // Did not beat level
 				// Only optimize distance passed in this case
-				int penalty = 0;
+				penalty = 1 - info.computeDistancePassed() / LEVEL_LENGTH;
 				if (info.marioRanOutOfTime) {
-					penalty = 50;
+					penalty *= 100;
 				}
 				else if (info.marioDiedToFall) {
-					penalty = 25;
+					penalty *= 50;
 				}
 				else if (info.marioDiedToEnemy) {
-					penalty = 10;
+					penalty *= 20;
 				}
 				else {
 					throw new RuntimeException("If mario failed, it should have been due to running out of time," +
 												" running into an enemy, or falling into a hole!");
 				}
-				return -info.computeDistancePassed() / LEVEL_LENGTH + penalty;
-			} else{ // Did beat level
-				//System.out.println("Beat level!");
-                                //System.out.println(info.computeJumpFraction());
-				// Also maximize time, since this would imply the level is more challenging/interesting
-				//return -info.computeDistancePassed() - info.timeSpentOnLevel; 
-                return  - info.computeDistancePassed() / LEVEL_LENGTH
-						- EvaluationInfo.hardJumpWeight * info.hardJumpActionsPerformed
-						- EvaluationInfo.mediumJumpWeight * info.mediumJumpActionsPerformed
-						- EvaluationInfo.easyJumpWeight * info.easyJumpActionsPerformed
-						- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed
-						- levelStats.numBrokenPipeTiles * EvaluationInfo.badPipeTileWeight
-                		- levelStats.numValidPipeTiles * EvaluationInfo.goodPipeTileWeight
-						- levelStats.gapFitness() * EvaluationInfo.gapWeight;
 			}
+			// Did beat level
+			//System.out.println("Beat level!");
+							//System.out.println(info.computeJumpFraction());
+			// Also maximize time, since this would imply the level is more challenging/interesting
+			//return -info.computeDistancePassed() - info.timeSpentOnLevel;
+			System.out.println("Goombas: " + levelStats.numGoombas);
+			return  - info.computeDistancePassed() / LEVEL_LENGTH
+					- EvaluationInfo.hardJumpWeight * info.hardJumpActionsPerformed
+					- EvaluationInfo.mediumJumpWeight * info.mediumJumpActionsPerformed
+					- EvaluationInfo.easyJumpWeight * info.easyJumpActionsPerformed
+					- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed
+					- levelStats.numBrokenPipeTiles * EvaluationInfo.badPipeTileWeight
+					- levelStats.numValidPipeTiles * EvaluationInfo.goodPipeTileWeight
+					- levelStats.gapFitness() * EvaluationInfo.gapWeight
+					- levelStats.optTransform(2, 1.5).apply((double) levelStats.numGoombas) * EvaluationInfo.enemyWeight
+					+ penalty;
 
 		} catch (IOException e) {
 			// Error occurred

@@ -3,13 +3,12 @@ package cmatest;
 import basicMap.Settings;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.LevelParser;
+import ch.idsia.mario.engine.sprites.Enemy;
 import reader.JsonReader;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
 import java.util.function.UnaryOperator;
 
 import static reader.JsonReader.JsonToDoubleArray;
@@ -81,7 +80,7 @@ public class LevelStatistics {
 
         LevelStatistics levelStats = new LevelStatistics(level);
         System.out.println("Broken Pipe Tiles: " + levelStats.numBrokenPipeTiles);
-        System.out.println(levelStats.containedInValidPipe(17, 12));
+        System.out.println(levelStats.gapFitness());
 
 
         eval.exit();
@@ -112,6 +111,8 @@ public class LevelStatistics {
     public int numGroundRocks = MagicNumberUndef;
     /* Number of empty spaces on ground level */
     public int numGaps = MagicNumberUndef;
+    /* Number of goombas */
+    public int numGoombas = MagicNumberUndef;
 
     public LevelStatistics(Level level) {
         this.level = level;
@@ -121,31 +122,32 @@ public class LevelStatistics {
         numRocks = 0;
         numGroundRocks = 0;
         numGaps = 0;
+        numGoombas = 0;
         processLevel();
     }
 
-    public UnaryOperator<Integer> optTransform(int opt) {
-        return (x) -> opt - Math.abs(opt - x);
+    public UnaryOperator<Double> optTransform(double opt, double mult) {
+        return (x) -> opt - mult * Math.abs(opt - x);
     }
 
     public double gapFitness() {
-        // List of all ground platform lengths
-        ArrayList<Integer> ground = new ArrayList<>();
         // List of all gap lengths
-        ArrayList<Integer> gaps = new ArrayList<>();
-        int groundStart = 0, gapStart = level.width;
+        ArrayList<Double> gaps = new ArrayList<>();
+        int gapStart = level.width;
         for (int xCurr = 0; xCurr < level.width; xCurr++) {
             int tile = level.getBlock(xCurr, level.height - 1);
             if (tile == GROUND_ROCK) {
                 // We're at the end of a gap
-                if (gapStart < xCurr - 1)
-                    gaps.add(xCurr - gapStart + 1);
+                if (gapStart < xCurr - 1) {
+                    gaps.add((double) xCurr - gapStart - 1);
+                    System.out.println("======================gap size: " + (xCurr - gapStart + 1));
+                }
                 // gapStart tracks xCarr as long as tile is rock
                 gapStart = xCurr;
             }
         }
-        gaps.replaceAll(optTransform(3));
-        return optTransform(7).apply(gaps.stream().mapToInt(a -> a).sum());
+        gaps.replaceAll(optTransform(3, 1));
+        return optTransform(7, 1.5).apply(gaps.stream().mapToDouble(a -> a).sum());
     }
 
     /* Private helper functions */
@@ -190,6 +192,8 @@ public class LevelStatistics {
         }
         if (y == level.height - 1 && level.getBlock(x, y) == EMPTY_SPACE)
             numGaps++;
+        if (level.getSpriteTemplate(x, y) != null && level.getSpriteTemplate(x, y).getType() == Enemy.ENEMY_GOOMBA)
+            numGoombas++;
     }
 
     private void processLevel() {

@@ -18,12 +18,12 @@ import java.io.IOException;
 public class CMAMarioSolver {
 	// Sebastian's Wasserstein GAN expects latent vectors of length 32
 	public static final int Z_SIZE = 32; // length of latent space vector
-	public static final int EVALS = 500;
+	public static final int EVALS = 1000;
 
 	
     public static void main(String[] args) throws IOException {
         Settings.setPythonProgram();
-        int loops = 1;
+        int loops = 5;
         double[][] bestX = new double[loops][32];
         double[] bestY = new double[loops];
         MarioEvalFunctionUNC marioEvalFunction = new MarioEvalFunctionUNC();
@@ -34,9 +34,9 @@ public class CMAMarioSolver {
             PrintWriter print_line = new PrintWriter(write);
             double[] solution = solver.run(print_line);
             print_line.close();
-            System.out.println("Best solution = " + Arrays.toString(MarioEvalFunction.mapArrayToOne(solution)));
-            bestX[i] = MarioEvalFunction.mapArrayToOne(solution);
-            bestY[i] = solver.fitFun.valueOf(MarioEvalFunction.mapArrayToOne(solution));
+            System.out.println("Best solution = " + Arrays.toString(solution));
+            bestX[i] = solution;
+            bestY[i] = solver.fitFun.valueOf(solution);
         }
         marioEvalFunction.exit();
         System.out.println("Done");
@@ -44,7 +44,6 @@ public class CMAMarioSolver {
             try (PrintWriter print_line = new PrintWriter(write)) {
                 for(int i=0;i<loops; i++){
                     print_line.println(Arrays.toString(bestX[i]));
-                    System.out.println(Arrays.toString(bestX[i]));
                 }
                 print_line.println(Arrays.toString(bestY));
             }
@@ -99,6 +98,8 @@ public class CMAMarioSolver {
 
         // iteration loop
         int step = 0;
+        double minfit = Double.MAX_VALUE;
+        double[] feature = new double[32];
         while (cma.stopConditions.getNumber() == 0) {
 
             // --- core iteration step ---
@@ -121,13 +122,18 @@ public class CMAMarioSolver {
                     max = (checker[k] > max) ? checker[k] : max;
                     min = (checker[k] < min) ? checker[k] : min;
                 }
+                //if (max > 0 && min < 0) throw new RuntimeException(
                 fitness[i] = (max > 0 && min < 0) ? min - EvaluationInfo.repeatWeight : min;
-
+                if(minfit > fitness[i]){
+                    minfit = fitness[i];
+                    feature = pop[i];
+                }
                 System.out.println(fitness[i]);
                 print_line.println(Arrays.toString(pop[i])+ " : " + fitness[i]);
                 System.out.println(step);
                 step++;
             }
+
             cma.updateDistribution(fitness);         // pass fitness array to update search distribution
             // --- end core iteration step ---
 
@@ -145,6 +151,8 @@ public class CMAMarioSolver {
         // cma.setFitnessOfMeanX(fitFun.valueOf(cma.getMeanX())); // updates the best ever solution
 
         // final output
+        System.out.println("The best fit value is : " + minfit);
+        System.out.println("The best is : " + Arrays.toString(feature));
         cma.writeToDefaultFiles(1);
         cma.println();
         cma.println("Terminated due to");
@@ -157,7 +165,7 @@ public class CMAMarioSolver {
         // we might return cma.getBestSolution() or cma.getBestX()
         // return cma.getBestX();
         cma.setFitnessOfMeanX(fitFun.valueOf(cma.getMeanX())); // updates the best ever solution
-        return cma.getBestX();
+        return feature;
         //return cma.getBestRecentX();
 
     }
