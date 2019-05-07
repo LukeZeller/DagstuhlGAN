@@ -17,12 +17,12 @@ import java.io.IOException;
 public class CMAMarioSolver {
 	// Sebastian's Wasserstein GAN expects latent vectors of length 32
 	public static final int Z_SIZE = 32; // length of latent space vector
-	public static final int EVALS = 1000;
+	public static final int EVALS = 1;
 
 	
     public static void main(String[] args) throws IOException {
         Settings.setPythonProgram();
-        int loops = 2;
+        int loops = 1;
         double[][] bestX = new double[loops][32];
         double[] bestY = new double[loops];
         MarioEvalFunctionUNC marioEvalFunction = new MarioEvalFunctionUNC();
