@@ -87,6 +87,7 @@ public class LevelStatistics {
     }
 
     /* Constants used by Level class to represent blocks */
+    private static final int EMPTY_SPACE = 0;
     private static final int GROUND_ROCK = 9;
     private static final int TOP_LEFT_PIPE = 10;
     private static final int TOP_RIGHT_PIPE = 11;
@@ -107,13 +108,16 @@ public class LevelStatistics {
     public int numRocks = MagicNumberUndef;
     /* Number of rocks on ground level */
     public int numGroundRocks = MagicNumberUndef;
+    /* Number of empty spaces on ground level */
+    public int numGaps = MagicNumberUndef;
 
     public LevelStatistics(Level level) {
         this.level = level;
         numPipeTiles = 0;
         numBrokenPipeTiles = 0;
-        numGroundRocks = 0;
         numRocks = 0;
+        numGroundRocks = 0;
+        numGaps = 0;
         processLevel();
     }
 
@@ -157,6 +161,8 @@ public class LevelStatistics {
             numRocks++;
             if (y == level.height - 1) numGroundRocks++;
         }
+        if (y == level.height - 1 && level.getBlock(x, y) == LevelStatistics.EMPTY_SPACE)
+            numGaps++;
     }
 
     private void processLevel() {

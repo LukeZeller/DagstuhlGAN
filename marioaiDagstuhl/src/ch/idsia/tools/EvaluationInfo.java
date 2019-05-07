@@ -35,6 +35,7 @@ public class EvaluationInfo
 
     public static final int badPipeTileWeight = -2;
     public static final int goodPipeTileWeight = 100;
+    public static final int gapWeight = 2;
     /* Statistics on player actions during the level */
     public int levelType = MagicNumberUndef;
     public int marioStatus = MagicNumberUndef;
