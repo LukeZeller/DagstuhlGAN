@@ -141,6 +141,11 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 
         int totalActionsPerfomed = 0;
         int jumpActionsPerformed = 0;
+        int hardJumpActionsPerformed = 0;
+        int mediumJumpActionsPerformed = 0;
+        int easyJumpActionsPerformed = 0;
+        int trivialJumpActionsPerformed = 0;
+        int previousJumpFrame = -1;
 // TODO: Manage better place for this:
         levelScene.mario.resetCoins();
         LevelScene backup = null;
@@ -172,8 +177,35 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
                 for (int i = 0; i < Environment.numberOfButtons; ++i){
                     if (action[i])
                     {
-                        if(i==Mario.KEY_JUMP){
+                        if(i == Mario.KEY_JUMP){
                             jumpActionsPerformed++;
+
+                            /*
+                            * If gapBetweenJumps is <= 1, that means the jump key was just held or pressed for the first time
+                            * We categorize the difficulty of jumps based on # of frames between the end of one jump action
+                            * which corresponds to the jump key being released and the start of the next jump action
+                            * which corresponds to the jump key being pressed
+                            */
+                            int gapBetweenJumps = frame - previousJumpFrame;
+                            if (gapBetweenJumps > 1)
+                            {
+                                if (gapBetweenJumps <= EvaluationInfo.hardJumpThreshold) {
+                                    hardJumpActionsPerformed++;
+                                }
+                                else if (gapBetweenJumps <= EvaluationInfo.mediumJumpThreshold) {
+                                    mediumJumpActionsPerformed++;
+                                }
+                                else if (gapBetweenJumps <= EvaluationInfo.easyJumpThreshold) {
+                                    easyJumpActionsPerformed++;
+                                }
+                                else if (gapBetweenJumps <= EvaluationInfo.trivialJumpThreshold) {
+                                    trivialJumpActionsPerformed++;
+                                }
+                                else {
+                                    /* there should never be a level large enough for the gap between two jumps to be larger
+                                     * than the trivial jump threshold */
+                                }
+                            }
                         }
                         ++totalActionsPerfomed;
                         break;
@@ -308,6 +340,11 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
 //        evaluationInfo.totalNumberOfCoins   = -1 ; // TODO: total Number of coins.
         evaluationInfo.totalActionsPerfomed = totalActionsPerfomed; // Counted during the play/simulation process
         evaluationInfo.jumpActionsPerformed = jumpActionsPerformed; // Counted during play/simulation
+        evaluationInfo.hardJumpActionsPerformed = hardJumpActionsPerformed; // Counted during play/simulation
+        evaluationInfo.mediumJumpActionsPerformed = mediumJumpActionsPerformed; // Counted during play/simulation
+        evaluationInfo.easyJumpActionsPerformed = easyJumpActionsPerformed; // Counted during play/simulation
+        evaluationInfo.trivialJumpActionsPerformed = trivialJumpActionsPerformed; // Counted during play/simulation
+
         evaluationInfo.totalFramesPerfomed = frame;
         evaluationInfo.marioMode = levelScene.mario.getMode();
         evaluationInfo.killsTotal = levelScene.mario.world.killedCreaturesTotal;
