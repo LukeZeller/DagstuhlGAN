@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.function.ToIntFunction;
+import java.util.function.UnaryOperator;
 
 import static reader.JsonReader.JsonToDoubleArray;
 
@@ -123,7 +124,7 @@ public class LevelStatistics {
         processLevel();
     }
 
-    public Function<Integer, Integer> optTransform(int opt) {
+    public UnaryOperator<Integer> optTransform(int opt) {
         return (x) -> opt - Math.abs(opt - x);
     }
 
@@ -143,7 +144,8 @@ public class LevelStatistics {
                 gapStart = xCurr;
             }
         }
-        return optTransform(7).apply(gaps.stream().mapToInt((ToIntFunction) optTransform(3)).sum());
+        gaps.replaceAll(optTransform(3));
+        return optTransform(7).apply(gaps.stream().mapToInt(a -> a).sum());
     }
 
     /* Private helper functions */
