@@ -179,11 +179,11 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             float current_mario_x = levelScene.mario.x;
             float current_mario_y = levelScene.mario.y;
 
-            if (current_mario_y > EvaluationInfo.lowestValidPosition && levelScene.timeLeft > 0)
+            if (current_mario_y > EvaluationInfo.lowestValidPosition && levelScene.getTimeLeft() > 0)
             {
                 marioDiedToFall = true;
             }
-            if (!marioDiedToFall && levelScene.mario.getStatus() == 0 && levelScene.timeLeft > 0)
+            if (!marioDiedToFall && levelScene.mario.getStatus() == 0 && levelScene.getTimeLeft() > 0)
             {
                 marioDiedToEnemy = true;
             }
@@ -351,7 +351,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             // Advance the frame
             frame++;
         }
-        marioRanOutOfTime = levelScene.timeLeft <= 0;
+        marioRanOutOfTime = levelScene.getTimeLeft() <= 0;
 //=========
         evaluationInfo.agentType = agent.getClass().getSimpleName();
         evaluationInfo.agentName = agent.getName();
