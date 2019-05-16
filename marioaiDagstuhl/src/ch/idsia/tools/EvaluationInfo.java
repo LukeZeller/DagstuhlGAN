@@ -125,6 +125,7 @@ public class EvaluationInfo
         String result = "";
         for (boolean[] move: marioMoves)
         {
+            result += "               ";
             result += move[Mario.KEY_LEFT] ? "L" : " ";
             result += move[Mario.KEY_RIGHT] ? "R" : " ";
             result += move[Mario.KEY_DOWN] ? "D" : " ";
@@ -166,7 +167,7 @@ public class EvaluationInfo
         ret += "\n              Total Frames Perfomed : " + totalFramesPerfomed;
         ret += "\n               Simple Basic Fitness : " + df.format(computeBasicFitness());
         ret += "\n               Memo: " + ((Memo.equals("")) ? "Empty" : Memo);
-        ret += "\n               Moves: " + convertMovesToString();
+        ret += "\n               Moves: \n" + convertMovesToString();
         return ret;
     }
 }
