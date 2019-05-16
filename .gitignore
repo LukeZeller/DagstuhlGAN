@@ -110,5 +110,6 @@ out
 .idea/workspace.xml
 .idea/
 marioaiDagstuhl/marioaiDagstuhl.iml
+*.iml
 *.dat
 my_python_path.txt
