@@ -2,6 +2,7 @@ package ch.idsia.tools;
 
 import ch.idsia.mario.engine.sprites.Mario;
 
+import java.util.ArrayList;
 import java.text.DecimalFormat;
 
 /**
@@ -62,6 +63,8 @@ public class EvaluationInfo
     public boolean marioDiedToFall = false;
     public boolean marioDiedToEnemy = false;
     public boolean marioRanOutOfTime = false;
+
+    public ArrayList<boolean[]> marioMoves = null;
     // Number Of collisions with creatures
     // if large
     // if fire
@@ -117,6 +120,21 @@ public class EvaluationInfo
 
     private DecimalFormat df = new DecimalFormat("0.00");
 
+    private String convertMovesToString()
+    {
+        String result = "";
+        for (boolean[] move: marioMoves)
+        {
+            result += move[Mario.KEY_LEFT] ? "L" : " ";
+            result += move[Mario.KEY_RIGHT] ? "R" : " ";
+            result += move[Mario.KEY_DOWN] ? "D" : " ";
+            result += move[Mario.KEY_JUMP] ? "J" : " ";
+            result += move[Mario.KEY_SPEED] ? "S" : " ";
+            result += "\n";
+        }
+        return result;
+    }
+
     public String toString()
     {
 
@@ -147,7 +165,8 @@ public class EvaluationInfo
         ret += "\n             Total Actions Perfomed : " + totalActionsPerfomed;
         ret += "\n              Total Frames Perfomed : " + totalFramesPerfomed;
         ret += "\n               Simple Basic Fitness : " + df.format(computeBasicFitness());
-        ret += "\nMemo: " + ((Memo.equals("")) ? "Empty" : Memo);
+        ret += "\n               Memo: " + ((Memo.equals("")) ? "Empty" : Memo);
+        ret += "\n               Moves: " + convertMovesToString();
         return ret;
     }
 }

@@ -151,6 +151,8 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         boolean marioDiedToFall = false;
         boolean marioDiedToEnemy = false;
         boolean marioRanOutOfTime = false;
+
+        ArrayList<boolean[]> marioMoves = new ArrayList<boolean[]>();
 // TODO: Manage better place for this:
         levelScene.mario.resetCoins();
         LevelScene backup = null;
@@ -192,6 +194,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             boolean[] action = agent.getAction(this/*DummyEnvironment*/);
             if (action != null)
             {
+                marioMoves.add(action);
                 for (int i = 0; i < Environment.numberOfButtons; ++i){
                     if (action[i])
                     {
@@ -378,6 +381,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.marioDiedToEnemy = marioDiedToEnemy;
         evaluationInfo.marioRanOutOfTime = marioRanOutOfTime;
         evaluationInfo.marioMode = levelScene.mario.getMode();
+        evaluationInfo.marioMoves = marioMoves;
         evaluationInfo.killsTotal = levelScene.mario.world.killedCreaturesTotal;
 //        evaluationInfo.Memo = "Number of attempt: " + Mario.numberOfAttempts;
         if (agent instanceof ServerAgent && levelScene.mario.keys != null /*this will happen if client quits unexpectedly in case of Server mode*/)
