@@ -194,7 +194,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             boolean[] action = agent.getAction(this/*DummyEnvironment*/);
             if (action != null)
             {
-                marioMoves.add(action);
+                marioMoves.add(action.clone());
                 for (int i = 0; i < Environment.numberOfButtons; ++i){
                     if (action[i])
                     {
