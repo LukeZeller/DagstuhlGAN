@@ -11,6 +11,7 @@ import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.LevelParser;
 import cmatest.MarioEvalFunction;
 import communication.MarioProcess;
+import communication.MarioProcess.Agent;
 import reader.JsonReader;
 
 /**
@@ -91,10 +92,10 @@ public class MarioLevelPlayer {
 		}
 
 		MarioProcess marioProcess = new MarioProcess();
-		marioProcess.launchMario(new String[0], true); // true means there is a human player
+		marioProcess.launchMario(new String[0], Agent.HUMAN_PLAYER); // true means there is a human player
 		System.out.println(marioProcess.simulateOneLevel(level));
 		
-                eval.exit();
+		eval.exit();
 		System.exit(0);
 	}
 }
