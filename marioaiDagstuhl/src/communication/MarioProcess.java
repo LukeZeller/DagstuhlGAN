@@ -21,7 +21,7 @@ public class MarioProcess extends Comm {
         this.threadName = "MarioProcess";
     }
 
-    public enum Agent {
+    public enum AgentType {
         HUMAN_PLAYER,
         ASTAR_AGENT,
         FORCED_AGENT,
@@ -32,7 +32,7 @@ public class MarioProcess extends Comm {
      */
     public void launchMario() {
     	String[] options = new String[] {""};
-    	launchMario(options, Agent.ASTAR_AGENT);
+    	launchMario(options, AgentType.ASTAR_AGENT);
     }
  
     /**
@@ -40,14 +40,14 @@ public class MarioProcess extends Comm {
      * @param options General command line options (currently not really used)
      * @param humanPlayer Whether a human is playing rather than a bot
      */
-    public void launchMario(String[] options, Agent agent) {
+    public void launchMario(String[] options, AgentType agent) {
         this.evaluationOptions = new CmdLineOptions(options);  // if none options mentioned, all defaults are used.
         // set agents
         createAgentsPool(agent);
         // Short time for evolution, but more for human
-        if(agent != Agent.HUMAN_PLAYER) evaluationOptions.setTimeLimit(20);
+        if(agent != AgentType.HUMAN_PLAYER) evaluationOptions.setTimeLimit(20);
         // TODO: Make these configurable from commandline?
-        evaluationOptions.setMaxFPS(agent != Agent.HUMAN_PLAYER); // Slow for human players, fast otherwise
+        evaluationOptions.setMaxFPS(agent != AgentType.HUMAN_PLAYER); // Slow for human players, fast otherwise
         evaluationOptions.setVisualization(true); // Set true to watch evaluations
         // Create Mario Component
         ToolsConfigurator.CreateMarioComponentFrame(evaluationOptions);
@@ -60,7 +60,7 @@ public class MarioProcess extends Comm {
     /**
      * Set the agent that is evaluated in the evolved levels
      */
-    public static void createAgentsPool(Agent agent)
+    public static void createAgentsPool(AgentType agent)
     {
     	// Could still generalize this more
         switch(agent){
