@@ -120,56 +120,61 @@ public class MarioEvalFunctionUNC implements IObjectiveFunction {
 	public double valueOf(double[] x) {
 		try {
 			Level level = levelFromLatentVector(x);
-			// Do a simulation
-			EvaluationInfo info = this.marioProcess.simulateOneLevel(level);
-
-			LevelStatistics levelStats = new LevelStatistics(level);
-			System.out.println("Broken Pipe Tiles: " + levelStats.numBrokenPipeTiles);
-			// Fitness is negative since CMA-ES tries to minimize
-                        //System.out.println("done");
-                        //System.out.println(info.jumpActionsPerformed);
-                        //System.out.println(info.computeJumpFraction());
-			double penalty = 0;
-			if(info.computeDistancePassed() < LEVEL_LENGTH) { // Did not beat level
-				// Only optimize distance passed in this case
-				penalty = 1 - info.computeDistancePassed() / LEVEL_LENGTH;
-				if (info.marioRanOutOfTime) {
-					penalty *= 100;
-				}
-				else if (info.marioDiedToFall) {
-					penalty *= 50;
-				}
-				else if (info.marioDiedToEnemy) {
-					penalty *= 20;
-				}
-				else {
-					throw new RuntimeException("If mario failed, it should have been due to running out of time," +
-												" running into an enemy, or falling into a hole!");
-				}
-			}
-			// Did beat level
-			//System.out.println("Beat level!");
-							//System.out.println(info.computeJumpFraction());
-			// Also maximize time, since this would imply the level is more challenging/interesting
-			//return -info.computeDistancePassed() - info.timeSpentOnLevel;
-			System.out.println("Goombas: " + levelStats.numGoombas);
-			return  - info.computeDistancePassed() / LEVEL_LENGTH
-					- EvaluationInfo.hardJumpWeight * info.hardJumpActionsPerformed
-					- EvaluationInfo.mediumJumpWeight * info.mediumJumpActionsPerformed
-					- EvaluationInfo.easyJumpWeight * info.easyJumpActionsPerformed
-					- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed
-					- levelStats.numBrokenPipeTiles * EvaluationInfo.badPipeTileWeight
-					- levelStats.numValidPipeTiles * EvaluationInfo.goodPipeTileWeight
-					- levelStats.gapFitness() * EvaluationInfo.gapWeight
-					- levelStats.optTransform(2, 1.5).apply((double) levelStats.numGoombas) * EvaluationInfo.enemyWeight
-					+ penalty;
-
-		} catch (IOException e) {
-			// Error occurred
+			return valueOf(level);
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 			System.exit(1);
 			return Double.NaN;
 		}
+	}
+
+	/**
+	 * Gets objective score for a given level
+	 */
+	public double valueOf(Level level) {
+		EvaluationInfo info = this.marioProcess.simulateOneLevel(level);
+
+		LevelStatistics levelStats = new LevelStatistics(level);
+		System.out.println("Broken Pipe Tiles: " + levelStats.numBrokenPipeTiles);
+		// Fitness is negative since CMA-ES tries to minimize
+		//System.out.println("done");
+		//System.out.println(info.jumpActionsPerformed);
+		//System.out.println(info.computeJumpFraction());
+		double penalty = 0;
+		if(info.computeDistancePassed() < LEVEL_LENGTH) { // Did not beat level
+			// Only optimize distance passed in this case
+			penalty = 1 - info.computeDistancePassed() / LEVEL_LENGTH;
+			if (info.marioRanOutOfTime) {
+				penalty *= 100;
+			}
+			else if (info.marioDiedToFall) {
+				penalty *= 50;
+			}
+			else if (info.marioDiedToEnemy) {
+				penalty *= 20;
+			}
+			else {
+				throw new RuntimeException("If mario failed, it should have been due to running out of time," +
+						" running into an enemy, or falling into a hole!");
+			}
+		}
+		// Did beat level
+		//System.out.println("Beat level!");
+		//System.out.println(info.computeJumpFraction());
+		// Also maximize time, since this would imply the level is more challenging/interesting
+		//return -info.computeDistancePassed() - info.timeSpentOnLevel;
+		System.out.println("Goombas: " + levelStats.numGoombas);
+		return  - info.computeDistancePassed() / LEVEL_LENGTH
+				- EvaluationInfo.hardJumpWeight * info.hardJumpActionsPerformed
+				- EvaluationInfo.mediumJumpWeight * info.mediumJumpActionsPerformed
+				- EvaluationInfo.easyJumpWeight * info.easyJumpActionsPerformed
+				- EvaluationInfo.trivialJumpWeight * info.trivialJumpActionsPerformed
+				- levelStats.numBrokenPipeTiles * EvaluationInfo.badPipeTileWeight
+				- levelStats.numValidPipeTiles * EvaluationInfo.goodPipeTileWeight
+				- levelStats.gapFitness() * EvaluationInfo.gapWeight
+				- levelStats.optTransform(2, 1.5).apply((double) levelStats.numGoombas) * EvaluationInfo.enemyWeight
+				+ penalty;
 	}
 
 	@Override
