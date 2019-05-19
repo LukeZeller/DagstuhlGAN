@@ -9,9 +9,11 @@ import java.util.List;
 import basicMap.Settings;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.LevelParser;
+import ch.idsia.mario.engine.sprites.Mario;
 import cmatest.MarioEvalFunction;
+import cmatest.MarioEvalFunctionWindowed;
 import communication.MarioProcess;
-import communication.MarioProcess.Agent;
+import communication.MarioProcess.AgentType;
 import reader.JsonReader;
 
 /**
@@ -92,9 +94,13 @@ public class MarioLevelPlayer {
 		}
 
 		MarioProcess marioProcess = new MarioProcess();
-		marioProcess.launchMario(new String[0], Agent.HUMAN_PLAYER); // true means there is a human player
+		marioProcess.launchMario(new String[0], AgentType.ASTAR_AGENT); // true means there is a human player
 		System.out.println(marioProcess.simulateOneLevel(level));
-		
+
+		MarioEvalFunctionWindowed evalFunc = new MarioEvalFunctionWindowed();
+		double fitness = evalFunc.valueOf(level);
+		System.out.println("Fitness of level is: " + fitness);
+
 		eval.exit();
 		System.exit(0);
 	}
