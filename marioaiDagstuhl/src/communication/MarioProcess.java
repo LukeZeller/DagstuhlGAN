@@ -11,6 +11,7 @@ import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
+import cmatest.marioobjectives.ActionArray;
 import competition.icegic.robin.AStarAgent;
 import cmatest.ForcedActionsAgent;
 
@@ -62,17 +63,21 @@ public class MarioProcess extends Comm {
         this.evaluationOptions = new CmdLineOptions(options);  // if none options mentioned, all defaults are used.
         // set agents
         createAgentsPool(agent);
-        // Short time for evolution, but more for human
-        if(!isHumanPlayer) evaluationOptions.setTimeLimit(20);
-        // TODO: Make these configurable from commandline?
-        evaluationOptions.setMaxFPS(!isHumanPlayer); // Slow for human players, fast otherwise
-        evaluationOptions.setVisualization(true); // Set true to watch evaluations
+        // set up evaluation options based on whether there is a human player
+        configureEvaluationOptions(isHumanPlayer);
         // Create Mario Component
         ToolsConfigurator.CreateMarioComponentFrame(evaluationOptions);
         evaluationOptions.setAgent(AgentsPool.getCurrentAgent());
         System.out.println(evaluationOptions.getAgent().getClass().getName());
         // set simulator
         this.simulator = new BasicSimulator(evaluationOptions.getSimulationOptionsCopy());
+    }
+
+    private void configureEvaluationOptions(boolean isHumanPlayer) {
+        // Short time for evolution, but more for human
+        if(!isHumanPlayer) evaluationOptions.setTimeLimit(20);
+        evaluationOptions.setMaxFPS(!isHumanPlayer); // Slow for human players, fast otherwise
+        evaluationOptions.setVisualization(true); // Set true to watch evaluations
     }
 
     private static Agent createNewAgent(AgentType agentType) {
@@ -84,13 +89,13 @@ public class MarioProcess extends Comm {
             case FORWARD_JUMPING_FORCED_AGENT: {
                 ArrayList<boolean[]> moves = new ArrayList<>();
                 // Set up the array for the right & jump press action
-                boolean[] jumpPress = ForcedActionsAgent.createAction(
-                        ForcedActionsAgent.MarioAction.JUMP,
-                        ForcedActionsAgent.MarioAction.RIGHT
+                boolean[] jumpPress = ActionArray.createAction(
+                        ActionArray.MarioAction.JUMP,
+                        ActionArray.MarioAction.RIGHT
                 );
                 // Set up the array for the right & jump release action
-                boolean[] jumpRelease = ForcedActionsAgent.createAction(
-                        ForcedActionsAgent.MarioAction.RIGHT
+                boolean[] jumpRelease = ActionArray.createAction(
+                        ActionArray.MarioAction.RIGHT
                 );
                 // We only need to add two actions since the forced actions agent will cycle through them in order
                 moves.add(jumpPress);
@@ -100,8 +105,8 @@ public class MarioProcess extends Comm {
             case FORWARD_FORCED_AGENT: {
                 ArrayList<boolean[]> moves = new ArrayList<>();
                 // Set up the array for moving right
-                boolean[] moveRight = ForcedActionsAgent.createAction(
-                        ForcedActionsAgent.MarioAction.RIGHT
+                boolean[] moveRight = ActionArray.createAction(
+                        ActionArray.MarioAction.RIGHT
                 );
                 // We only need to add one action since the forced actions agent will repeat it indefinitely
                 moves.add(moveRight);
