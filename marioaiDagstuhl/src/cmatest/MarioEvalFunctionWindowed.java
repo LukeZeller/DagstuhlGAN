@@ -25,6 +25,7 @@ public class MarioEvalFunctionWindowed implements IObjectiveFunction {
 
     private GANProcess ganProcess;
     private MarioProcess marioProcess;
+    private MarioProcess simulationProcess;
 
     // changing floor will change the reason for termination
     // (in conjunction with the target value)
@@ -35,23 +36,32 @@ public class MarioEvalFunctionWindowed implements IObjectiveFunction {
         // set up process for GAN
         ganProcess = new GANProcess();
         ganProcess.start();
-        // set up mario game
-        marioProcess = new MarioProcess();
-        marioProcess.start();
-        // consume all start-up messages that are not data responses
-        String response = "";
-        while(!response.equals("READY")) {
-            response = ganProcess.commRecv();
-        }
+
+        setupMarioProcesses();
+        setupConsumptionOfNonDataResponses();
     }
 
     public MarioEvalFunctionWindowed(String GANPath, String GANDim) throws IOException {
         // set up process for GAN
         ganProcess = new GANProcess(GANPath, GANDim);
         ganProcess.start();
+
+        setupMarioProcesses();
+        setupConsumptionOfNonDataResponses();
+    }
+
+    private void setupMarioProcesses()
+    {
         // set up mario game
         marioProcess = new MarioProcess();
         marioProcess.start();
+        // set up a process for simulating input moves in order to see if a level can be completed in a particular way
+        simulationProcess = new MarioProcess();
+        simulationProcess.start();
+    }
+
+    private void setupConsumptionOfNonDataResponses()
+    {
         // consume all start-up messages that are not data responses
         String response = "";
         while(!response.equals("READY")) {
