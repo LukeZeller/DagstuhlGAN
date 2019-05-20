@@ -44,6 +44,14 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
         }
     }
 
+    public enum MarioAction {
+        LEFT,
+        RIGHT,
+        DUCK,
+        SPEED,
+        JUMP
+    }
+
     public boolean[] getAction(Environment observation)
     {
         if (tickCounter < 0)
@@ -56,6 +64,31 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
         tickCounter++;
 
         return action;
+    }
+
+    public static boolean[] createAction(MarioAction... actions) {
+        boolean [] createdAction = new boolean[Environment.numberOfButtons];
+        for (MarioAction action: actions) {
+            switch (action) {
+                case LEFT:
+                    createdAction[Mario.KEY_LEFT] = true;
+                    break;
+                case RIGHT:
+                    createdAction[Mario.KEY_RIGHT] = true;
+                    break;
+                case DUCK:
+                    createdAction[Mario.KEY_DOWN] = true;
+                    break;
+                case SPEED:
+                    createdAction[Mario.KEY_SPEED] = true;
+                    break;
+                case JUMP:
+                    createdAction[Mario.KEY_JUMP] = true;
+                default:
+                    throw new RuntimeException("Unhandled type of MarioAction");
+            }
+        }
+        return createdAction;
     }
 
     public AGENT_TYPE getType()
