@@ -94,7 +94,7 @@ public class MarioLevelPlayer {
 		}
 
 		MarioProcess marioProcess = new MarioProcess();
-		marioProcess.launchMario(new String[0], AgentType.ASTAR_AGENT); // true means there is a human player
+		marioProcess.launchMario(new String[0], AgentType.FORWARD_FORCED_AGENT); // true means there is a human player
 		System.out.println(marioProcess.simulateOneLevel(level));
 
 		MarioEvalFunctionWindowed evalFunc = new MarioEvalFunctionWindowed();
