@@ -2,8 +2,6 @@ package cmatest;
 
 import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.ai.BasicAIAgent;
-import competition.icegic.robin.astar.AStarSimulator;
-import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.environments.Environment;
 
 import java.util.ArrayList;
@@ -12,10 +10,7 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
 {
     protected boolean action[] = new boolean[Environment.numberOfButtons];
     protected String name = "ForcedActionsAgent";
-    private AStarSimulator sim;
     private int tickCounter = 0;
-    private float lastX = 0;
-    private float lastY = 0;
     private ArrayList<boolean[]> moves;
 
     public ForcedActionsAgent(ArrayList<boolean[]> moves) {
@@ -30,7 +25,6 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
     public void reset()
     {
         action = new boolean[Environment.numberOfButtons];// Empty action
-        sim = new AStarSimulator();
     }
 
     public void printLevel(byte[][] levelScene)
@@ -48,14 +42,6 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
         }
     }
 
-    public enum MarioAction {
-        LEFT,
-        RIGHT,
-        DUCK,
-        SPEED,
-        JUMP
-    }
-
     public boolean[] getAction(Environment observation)
     {
         if (tickCounter < 0)
@@ -68,31 +54,6 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
         tickCounter++;
 
         return action;
-    }
-
-    public static boolean[] createAction(MarioAction... actions) {
-        boolean [] createdAction = new boolean[Environment.numberOfButtons];
-        for (MarioAction action: actions) {
-            switch (action) {
-                case LEFT:
-                    createdAction[Mario.KEY_LEFT] = true;
-                    break;
-                case RIGHT:
-                    createdAction[Mario.KEY_RIGHT] = true;
-                    break;
-                case DUCK:
-                    createdAction[Mario.KEY_DOWN] = true;
-                    break;
-                case SPEED:
-                    createdAction[Mario.KEY_SPEED] = true;
-                    break;
-                case JUMP:
-                    createdAction[Mario.KEY_JUMP] = true;
-                default:
-                    throw new RuntimeException("Unhandled type of MarioAction");
-            }
-        }
-        return createdAction;
     }
 
     public AGENT_TYPE getType()
