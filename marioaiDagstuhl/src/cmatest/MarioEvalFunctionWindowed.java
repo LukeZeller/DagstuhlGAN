@@ -145,28 +145,83 @@ public class MarioEvalFunctionWindowed implements IObjectiveFunction {
      * Gets objective score for a given level
      */
     public double valueOf(Level level) {
-        double difficulty = 0.0;
         EvaluationInfo info = this.marioProcess.simulateOneLevel(level);
         ArrayList<boolean[]> moves = info.marioMoves;
 
-        ArrayList<Integer> jumpStarts = new ArrayList<>();
-        ArrayList<Integer> jumpEnds = new ArrayList<>();
+        double difficulty = 0.0;
+        if (info.marioStatus == Mario.STATUS_WIN) {
+            int numberOfValidStartEndPairs = 0;
 
-        boolean jumpAlreadyPressed = false;
-        for (int frame = 0; frame < moves.size(); frame++)
-        {
-            boolean jumpCurrentlyPressed = moves.get(frame)[Mario.KEY_JUMP];
-            if (!jumpAlreadyPressed && jumpCurrentlyPressed)
-            {
-                jumpStarts.add(frame);
+            ArrayList<Integer> jumpStarts = new ArrayList<>();
+            ArrayList<Integer> jumpEnds = new ArrayList<>();
+
+            boolean jumpAlreadyPressed = false;
+            for (int frame = 0; frame < moves.size(); frame++) {
+                boolean jumpCurrentlyPressed = moves.get(frame)[Mario.KEY_JUMP];
+                if (!jumpAlreadyPressed && jumpCurrentlyPressed) {
+                    jumpStarts.add(frame);
+                }
+                if (jumpAlreadyPressed && !jumpCurrentlyPressed) {
+                    jumpEnds.add(frame);
+                }
+
+                jumpAlreadyPressed = jumpCurrentlyPressed;
             }
-            if (jumpAlreadyPressed && !jumpCurrentlyPressed)
-            {
-                jumpEnds.add(frame);
+
+            if (jumpStarts.isEmpty()) {
+                /*
+                 * If there are no jumps, the difficulty of the level is low, which corresponds to having a lot of
+                 * valid start/end time windows for the 'jumps'
+                 */
+                numberOfValidStartEndPairs = Integer.MAX_VALUE;
             }
-            jumpAlreadyPressed = jumpCurrentlyPressed;
+            else {
+                if (jumpEnds.size() < jumpStarts.size())
+                {
+                    /*
+                     * If there is no release of the jump key before the level is complete, add a sentinel jump
+                     * release 1 frame after the last jump was started
+                     */
+                    int lastJumpStart = jumpStarts.get(jumpStarts.size() - 1);
+                    jumpEnds.add(lastJumpStart + 1);
+                }
+                if (jumpStarts.size() != jumpEnds.size()) {
+                    throw new RuntimeException("Mismatch between number of jump key presses and releases");
+                }
+                if (jumpStarts.size() != info.jumpActionsPerformed) {
+                    throw new RuntimeException("Number of jumps incorrectly counted");
+                }
+                int numJumps = jumpStarts.size();
+                /* Debug information */
+                System.out.println("Jumps ");
+                for (int i = 0; i < numJumps; i++)
+                {
+                    System.out.println("(" + jumpStarts.get(i) + ", " + jumpEnds.get(i) + ")");
+                }
+
+                numberOfValidStartEndPairs = numJumps;
+            }
+
+            difficulty = 1.0 / numberOfValidStartEndPairs;
         }
-        return difficulty;
+        else {
+            double penaltyForMethodOfDeath;
+            if (info.marioDiedToEnemy) {
+                penaltyForMethodOfDeath = 5;
+            }
+            else if (info.marioDiedToFall) {
+                penaltyForMethodOfDeath = 6;
+            }
+            else if (info.marioRanOutOfTime) {
+                penaltyForMethodOfDeath = 7;
+            }
+            else {
+                throw new RuntimeException("Invalid mario status collected from info: " + info.marioStatus);
+            }
+            difficulty = -penaltyForMethodOfDeath;
+        }
+        // Since the CMA-ES will minimize the function, we need to negate our fitness value to maximize difficulty
+        return -difficulty;
     }
 
     @Override
