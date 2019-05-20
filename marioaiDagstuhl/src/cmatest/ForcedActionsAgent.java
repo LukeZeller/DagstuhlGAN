@@ -23,6 +23,10 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
         this.moves = moves;
     }
 
+    public void setMoves(ArrayList<boolean[]> moves) {
+        this.moves = moves;
+    }
+
     public void reset()
     {
         action = new boolean[Environment.numberOfButtons];// Empty action
