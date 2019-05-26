@@ -98,7 +98,6 @@ ENV/
 
 # mypy
 .mypy_cache/
-.DS_Stor
 /bin/
 
 sample_*.*
@@ -113,3 +112,6 @@ marioaiDagstuhl/marioaiDagstuhl.iml
 *.iml
 *.dat
 my_python_path.txt
+
+# Mac .DS_STORE metadata files
+.DS_STORE
