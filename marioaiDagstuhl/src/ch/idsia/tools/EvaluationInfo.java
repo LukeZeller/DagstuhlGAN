@@ -1,7 +1,9 @@
 package ch.idsia.tools;
 
 import ch.idsia.mario.engine.sprites.Mario;
+import cmatest.ActionArray;
 
+import java.util.ArrayList;
 import java.text.DecimalFormat;
 
 /**
@@ -62,6 +64,9 @@ public class EvaluationInfo
     public boolean marioDiedToFall = false;
     public boolean marioDiedToEnemy = false;
     public boolean marioRanOutOfTime = false;
+    public boolean redundantJumpHold = false;
+
+    public ArrayList<boolean[]> marioMoves = null;
     // Number Of collisions with creatures
     // if large
     // if fire
@@ -147,7 +152,42 @@ public class EvaluationInfo
         ret += "\n             Total Actions Perfomed : " + totalActionsPerfomed;
         ret += "\n              Total Frames Perfomed : " + totalFramesPerfomed;
         ret += "\n               Simple Basic Fitness : " + df.format(computeBasicFitness());
-        ret += "\nMemo: " + ((Memo.equals("")) ? "Empty" : Memo);
+        ret += "\n               Memo: " + ((Memo.equals("")) ? "Empty" : Memo);
+        ret += "\n               Moves: \n" + ActionArray.convertMovesToString(marioMoves);
+        return ret;
+    }
+
+    public String toStringQuiet()
+    {
+
+        String ret = "\nStatistics. Score:";
+        ret += "\n                  Player/Agent type : " + agentType;
+        ret += "\n                  Player/Agent name : " + agentName;
+        ret += "\n                       Mario Status : " + ((marioStatus == Mario.STATUS_WIN) ? "Win!" : "Loss...");
+        ret += "\n                         Level Type : " + levelType;
+        ret += "\n                   Level Difficulty : " + levelDifficulty;
+        ret += "\n                    Level Rand Seed : " + levelRandSeed;
+        ret += "\n                         Lives Left : " + livesLeft;
+        ret += "\nTotal Length of Level (Phys, Cells) : " + "(" + totalLengthOfLevelPhys + "," + totalLengthOfLevelCells + ")";
+        ret += "\n                      Passed (Phys) : " + df.format(lengthOfLevelPassedPhys / totalLengthOfLevelPhys *100) + "% ( " + df.format(lengthOfLevelPassedPhys) + " of " + totalLengthOfLevelPhys + ")";
+        ret += "\n                     Passed (Cells) : " + df.format((double)lengthOfLevelPassedCells / totalLengthOfLevelCells *100) + "% ( " + lengthOfLevelPassedCells + " of " + totalLengthOfLevelCells + ")";
+        ret += "\n             Time Spent(Fractioned) : " + timeSpentOnLevel + " ( " + df.format((double)timeSpentOnLevel/totalTimeGiven*100) + "% )";
+        ret += "\n              Time Left(Fractioned) : " + timeLeft + " ( " + df.format((double)timeLeft/totalTimeGiven*100) + "% )";
+        ret += "\n                   Total time given : " + totalTimeGiven;
+//        ret += "\nCoins Gained: " + numberOfGainedCoins/totalNumberOfCoins*100 + "%. (" + numberOfGainedCoins + " of " + totalNumberOfCoins + ")";
+        ret += "\n                       Coins Gained : " + numberOfGainedCoins;
+        ret += "\n             Jump Actions Performed : " + jumpActionsPerformed;
+        ret += "\n     Trivial Jump Actions Performed : " + trivialJumpActionsPerformed;
+        ret += "\n        Easy Jump Actions Performed : " + easyJumpActionsPerformed;
+        ret += "\n      Medium Jump Actions Performed : " + mediumJumpActionsPerformed;
+        ret += "\n        Hard Jump Actions Performed : " + hardJumpActionsPerformed;
+        ret += "\n        Mario Died to Fall : "          + marioDiedToFall;
+        ret += "\n        Mario Died to Enemy: "          + marioDiedToEnemy;
+        ret += "\n        Mario Ran out of Time : "       + marioRanOutOfTime;
+        ret += "\n             Total Actions Perfomed : " + totalActionsPerfomed;
+        ret += "\n              Total Frames Perfomed : " + totalFramesPerfomed;
+        ret += "\n               Simple Basic Fitness : " + df.format(computeBasicFitness());
+        ret += "\n               Memo: " + ((Memo.equals("")) ? "Empty" : Memo);
         return ret;
     }
 }

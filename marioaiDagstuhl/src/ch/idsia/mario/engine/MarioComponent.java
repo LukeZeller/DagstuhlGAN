@@ -1,7 +1,6 @@
 package ch.idsia.mario.engine;
 
 import ch.idsia.ai.agents.Agent;
-import ch.idsia.ai.agents.ai.RandomAgent;
 import ch.idsia.ai.agents.human.CheaterKeyboardAgent;
 import ch.idsia.mario.engine.level.LevelParser;
 import ch.idsia.mario.engine.sprites.Mario;
@@ -18,8 +17,8 @@ import java.awt.event.KeyAdapter;
 import java.awt.image.VolatileImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import cmatest.ActionArray;
 import reader.JsonReader;
 
 
@@ -151,6 +150,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         boolean marioDiedToFall = false;
         boolean marioDiedToEnemy = false;
         boolean marioRanOutOfTime = false;
+
+        ArrayList<boolean[]> marioMoves = new ArrayList<>();
+
 // TODO: Manage better place for this:
         levelScene.mario.resetCoins();
         LevelScene backup = null;
@@ -189,9 +191,14 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             }
             // System.out.println("Current x and y: " + current_mario_x + " " + current_mario_y);
 
-            boolean[] action = agent.getAction(this/*DummyEnvironment*/);
+            boolean [] action = agent.getAction(this/*DummyEnvironment*/);
             if (action != null)
             {
+                if (!marioMoves.isEmpty() && marioMoves.get(marioMoves.size() - 1)[Mario.KEY_JUMP] &&
+                    isMarioOnGround()) {
+                    evaluationInfo.redundantJumpHold = true;
+                }
+                marioMoves.add(action.clone());
                 for (int i = 0; i < Environment.numberOfButtons; ++i){
                     if (action[i])
                     {
@@ -351,6 +358,9 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
             // Advance the frame
             frame++;
         }
+        // Remove redundant blank actions at the end of Mario's moves
+        ActionArray.rstripBlankActions(marioMoves, new boolean[Environment.numberOfButtons]);
+
         marioRanOutOfTime = levelScene.getTimeLeft() <= 0;
 //=========
         evaluationInfo.agentType = agent.getClass().getSimpleName();
@@ -378,6 +388,7 @@ public class MarioComponent extends JComponent implements Runnable, /*KeyListene
         evaluationInfo.marioDiedToEnemy = marioDiedToEnemy;
         evaluationInfo.marioRanOutOfTime = marioRanOutOfTime;
         evaluationInfo.marioMode = levelScene.mario.getMode();
+        evaluationInfo.marioMoves = marioMoves;
         evaluationInfo.killsTotal = levelScene.mario.world.killedCreaturesTotal;
 //        evaluationInfo.Memo = "Number of attempt: " + Mario.numberOfAttempts;
         if (agent instanceof ServerAgent && levelScene.mario.keys != null /*this will happen if client quits unexpectedly in case of Server mode*/)

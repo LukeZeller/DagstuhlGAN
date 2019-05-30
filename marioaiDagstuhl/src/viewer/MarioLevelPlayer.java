@@ -9,8 +9,12 @@ import java.util.List;
 import basicMap.Settings;
 import ch.idsia.mario.engine.level.Level;
 import ch.idsia.mario.engine.level.LevelParser;
+import ch.idsia.mario.engine.sprites.Mario;
+import ch.idsia.tools.EvaluationInfo;
 import cmatest.MarioEvalFunction;
+import cmatest.MarioEvalFunctionWindowedSingle;
 import communication.MarioProcess;
+import communication.MarioProcess.AgentType;
 import reader.JsonReader;
 
 /**
@@ -29,7 +33,7 @@ public class MarioLevelPlayer {
 	public static final int BLOCK_SIZE = 16;
 	public static final int LEVEL_HEIGHT = 14;	
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, CloneNotSupportedException {
 		Settings.setPythonProgram();
 		// This is used because it contains code for communicating with the GAN
 		MarioEvalFunction eval = new MarioEvalFunction();
@@ -89,12 +93,35 @@ public class MarioLevelPlayer {
 			System.out.println("Generating level with default vector");
 			level = eval.levelFromLatentVector(new double[] {0.9881835842209917, -0.9986077315374948, 0.9995512051242508, 0.9998643432807639, -0.9976165917284504, -0.9995247114230822, -0.9997001909358728, 0.9995694511739592, -0.9431036754879115, 0.9998155541290887, 0.9997863689962382, -0.8761392912669269, -0.999843833016589, 0.9993230720045649, 0.9995470247917402, -0.9998847606084427, -0.9998322053148382, 0.9997707200294411, -0.9998905141832997, -0.9999512510490688, -0.9533512808031753, 0.9997703088007039, -0.9992229823819915, 0.9953917828622341, 0.9973473366437476, 0.9943030781608361, 0.9995290290713732, -0.9994945079679955, 0.9997109900652238, -0.9988379572928884, 0.9995070647543864, 0.9994132207570211});
 		}
+		Level levelWithHoles = level.placeHoles(16, 19, 13, 13);
+		Level levelWithMoreHoles = levelWithHoles.placeHoles(20, 27, 13, 13);
 
-		MarioProcess marioProcess = new MarioProcess();
-		marioProcess.launchMario(new String[0], true); // true means there is a human player
-		System.out.println(marioProcess.simulateOneLevel(level));
-		
-                eval.exit();
+		/*
+		System.out.println("View complete level by playing");
+        EvaluationInfo info = playLevel(level.deepcopy());
+		System.out.println(info.toStringQuiet());
+
+		System.out.println("View level with holes by playing");
+		EvaluationInfo infoWithHoles = playLevel(levelWithHoles.deepcopy());
+		System.out.println(infoWithHoles.toStringQuiet());
+		*/
+
+		double fitness = new MarioEvalFunctionWindowedSingle().valueOf(level.deepcopy());
+		System.out.println("Fitness of level is: " + fitness);
+
+		double fitnessWithHoles = new MarioEvalFunctionWindowedSingle().valueOf(levelWithHoles.deepcopy());
+		System.out.println("Fitness of level with holes is: " + fitnessWithHoles);
+
+		double fitnessWithMoreHoles = new MarioEvalFunctionWindowedSingle().valueOf(levelWithMoreHoles.deepcopy());
+		System.out.println("Fitness of level with more holes is: " + fitnessWithMoreHoles);
+
+		eval.exit();
 		System.exit(0);
+	}
+
+	private static EvaluationInfo playLevel(Level level) {
+		MarioProcess marioProcess = new MarioProcess();
+		marioProcess.launchMario(new String[0], AgentType.HUMAN_PLAYER);
+		return marioProcess.simulateOneLevel(level);
 	}
 }
