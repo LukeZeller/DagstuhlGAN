@@ -4,14 +4,13 @@ import ch.idsia.ai.agents.Agent;
 import ch.idsia.ai.agents.AgentsPool;
 import ch.idsia.ai.agents.human.HumanKeyboardAgent;
 import ch.idsia.mario.engine.level.Level;
-import ch.idsia.mario.engine.sprites.Mario;
 import ch.idsia.mario.simulation.BasicSimulator;
 import ch.idsia.mario.simulation.Simulation;
 import ch.idsia.tools.CmdLineOptions;
 import ch.idsia.tools.EvaluationInfo;
 import ch.idsia.tools.EvaluationOptions;
 import ch.idsia.tools.ToolsConfigurator;
-import cmatest.marioobjectives.ActionArray;
+import cmatest.ActionArray;
 import competition.icegic.robin.AStarAgent;
 import cmatest.ForcedActionsAgent;
 
@@ -20,6 +19,7 @@ import java.util.ArrayList;
 public class MarioProcess extends Comm {
     private EvaluationOptions evaluationOptions;
     private Simulation simulator;
+    public boolean printAgentName = false;
 
     public MarioProcess() {
         super();
@@ -68,7 +68,7 @@ public class MarioProcess extends Comm {
         // Create Mario Component
         ToolsConfigurator.CreateMarioComponentFrame(evaluationOptions);
         evaluationOptions.setAgent(AgentsPool.getCurrentAgent());
-        System.out.println(evaluationOptions.getAgent().getClass().getName());
+        if (printAgentName) System.out.println(evaluationOptions.getAgent().getClass().getName());
         // set simulator
         this.simulator = new BasicSimulator(evaluationOptions.getSimulationOptionsCopy());
     }
@@ -77,7 +77,7 @@ public class MarioProcess extends Comm {
         // Short time for evolution, but more for human
         if(!isHumanPlayer) evaluationOptions.setTimeLimit(20);
         evaluationOptions.setMaxFPS(!isHumanPlayer); // Slow for human players, fast otherwise
-        evaluationOptions.setVisualization(true); // Set true to watch evaluations
+        evaluationOptions.setVisualization(isHumanPlayer); // Set true to watch evaluations
     }
 
     private static Agent createNewAgent(AgentType agentType) {

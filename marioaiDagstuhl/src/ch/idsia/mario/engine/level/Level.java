@@ -1,6 +1,7 @@
 package ch.idsia.mario.engine.level;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +43,6 @@ public class Level implements Cloneable
 
     public int xExit;
     public int yExit;
-
 
     public Level(int width, int height)
     {
@@ -118,12 +118,53 @@ public class Level implements Cloneable
     @Override
     public Object clone() throws CloneNotSupportedException
     {
-    	//System.out.println("Cloning level, wh: "+width + " "+height);
-    	Level l =  (Level) super.clone();
-    	List<int[]> clone = new ArrayList<int[]>(modifiedMapTiles.size());
+        //System.out.println("Cloning level, wh: "+width + " "+height);
+        Level l =  (Level) super.clone();
+        List<int[]> clone = new ArrayList<int[]>(modifiedMapTiles.size());
+        for(int[] item: modifiedMapTiles)
+            clone.add((int[]) item.clone());
+        return l;
+    }
+
+    private Level copyArrays() throws CloneNotSupportedException
+    {
+    	Level cloned = new Level(width, height);
+    	cloned.modifiedMapTiles = new ArrayList<>(modifiedMapTiles.size());
     	for(int[] item: modifiedMapTiles) 
-    		clone.add((int[]) item.clone());
-    	return l;
+    		cloned.modifiedMapTiles.add(item.clone());
+        for (int row = 0; row < width; row++) {
+            for (int col = 0; col < height; col++) {
+                cloned.map[row][col] = map[row][col];
+                cloned.data[row][col] = this.data[row][col];
+                cloned.observation[row][col] = this.observation[row][col];
+                cloned.spriteTemplates[row][col] =  this.spriteTemplates[row][col] != null ?
+                                                    (SpriteTemplate) this.spriteTemplates[row][col].clone() :
+                                                    null;
+            }
+        }
+        cloned.xExit = xExit;
+        cloned.yExit = yExit;
+        return cloned;
+    }
+
+    public Level deepcopy() {
+        try {
+            return this.copyArrays();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
+    }
+
+    public Level placeHoles(int xLeft, int xRight, int yLeft, int yRight) {
+        Level withHoles = deepcopy();
+        for (int x = xLeft; x <= xRight; x++) {
+            for (int y = yLeft; y <= yRight; y++) {
+                withHoles.map[x][y] = 0;
+            }
+        }
+        return withHoles;
     }
         
     public static void loadBehaviors(DataInputStream dis) throws IOException
@@ -201,7 +242,21 @@ public class Level implements Cloneable
         	}
             dos.println();
         }
-    }    
+    }
+
+    @Override
+    public String toString() {
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            PrintStream ps = new PrintStream(baos, true, "UTF-8");
+            this.saveText(ps);
+            return new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("Unable to convert level to string");
+        }
+    }
     
     public void tick()
     {

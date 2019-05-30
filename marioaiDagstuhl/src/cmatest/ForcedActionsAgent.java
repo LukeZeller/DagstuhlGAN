@@ -12,14 +12,20 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
     protected String name = "ForcedActionsAgent";
     private int tickCounter = 0;
     private ArrayList<boolean[]> moves;
+    private boolean cycleMoves;
 
     public ForcedActionsAgent(ArrayList<boolean[]> moves) {
-        super("ForcedActionsAgent");
-        this.moves = moves;
+        this(moves, true);
     }
 
-    public void setMoves(ArrayList<boolean[]> moves) {
-        this.moves = moves;
+    public ForcedActionsAgent(ArrayList<boolean[]> moves, boolean cycleMoves) {
+        super("ForcedActionsAgent");
+        if (moves == null)
+            this.moves = null;
+        else
+            this.moves = new ArrayList<>(moves);
+        this.cycleMoves = cycleMoves;
+
     }
 
     public void reset()
@@ -48,11 +54,16 @@ public class ForcedActionsAgent extends BasicAIAgent implements Agent
         {
             throw new RuntimeException("The current tick is negative which is invalid");
         }
-        // If the tickCounter is greater than the number of frames, cycle back to the beginning
-        int frameNumber = tickCounter % moves.size();
-        boolean [] action = moves.get(frameNumber);
+        boolean[] action;
+        if (cycleMoves || tickCounter < moves.size()) {
+            // If the tickCounter is greater than the number of frames, cycle back to the beginning
+            int frameNumber = tickCounter % moves.size();
+            action = moves.get(frameNumber);
+        }
+        else {
+            action = new boolean[Environment.numberOfButtons];
+        }
         tickCounter++;
-
         return action;
     }
 
